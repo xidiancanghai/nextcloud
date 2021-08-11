@@ -66,7 +66,6 @@ class UpdateGroups extends \OC\BackgroundJob\TimedJob {
 
 		$knownGroups = array_keys(self::getKnownGroups());
 		$actualGroups = self::getGroupBE()->getGroups();
-
 		if(empty($actualGroups) && empty($knownGroups)) {
 			\OCP\Util::writeLog('user_ldap',
 				'bgJ "updateGroups" – groups do not seem to be configured properly, aborting.',

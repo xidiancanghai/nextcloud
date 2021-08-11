@@ -282,7 +282,6 @@ class Database extends ABackend
 			$groups[] = $row['gid'];
 		}
 		$result->closeCursor();
-
 		return $groups;
 	}
 

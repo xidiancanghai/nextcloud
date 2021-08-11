@@ -40,6 +40,7 @@ class MetaData {
 	protected $user;
 	/** @var bool */
 	protected $isAdmin;
+	protected $isSecAdmin;
 	/** @var array */
 	protected $metaData = array();
 	/** @var IGroupManager */
@@ -59,11 +60,13 @@ class MetaData {
 	public function __construct(
 			$user,
 			$isAdmin,
+			$isSecAdmin,
 			IGroupManager $groupManager,
 			IUserSession $userSession
 			) {
 		$this->user = $user;
 		$this->isAdmin = (bool)$isAdmin;
+		$this->isSecAdmin = (bool)$isSecAdmin;
 		$this->groupManager = $groupManager;
 		$this->userSession = $userSession;
 	}
@@ -93,7 +96,7 @@ class MetaData {
 
 		foreach($this->getGroups($groupSearch) as $group) {
 			$groupMetaData = $this->generateGroupMetaData($group, $userSearch);
-			if (strtolower($group->getGID()) !== 'admin') {
+			if (!$group->isAdmin && !$group->isSecAdmin()) {
 				$this->addEntry(
 					$groups,
 					$sortGroupsKeys,
@@ -191,8 +194,26 @@ class MetaData {
 	 * @return \OCP\IGroup[]
 	 */
 	public function getGroups($search = '') {
-		if($this->isAdmin) {
-			return $this->groupManager->search($search);
+		// if ($this->isSecAdmin) {
+		// 	return array(new SecurityGroup("confidential"),new SecurityGroup("secret"),new SecurityGroup("inside"),new SecurityGroup("open"));
+		// } else 
+		if($this->isAdmin || $this->isSecAdmin) {
+			$groups = $this->groupManager->search($search);
+
+			// 过滤
+			$secGroups = array();
+			$nomormalGroups = array();
+			foreach ($groups as $value) {
+				if ($value->isSecAdmin()) {
+					array_push($secGroups, $value);
+				}  else {
+					array_push($nomormalGroups, $value);
+				}
+			}
+			if ($this->isSecAdmin) {
+				return $secGroups;
+			} 
+			return $nomormalGroups;
 		} else {
 			$userObject = $this->userSession->getUser();
 			if($userObject !== null) {

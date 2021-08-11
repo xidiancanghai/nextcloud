@@ -82,6 +82,7 @@ class SecurityMiddleware extends Middleware {
 	private $isLoggedIn;
 	/** @var bool */
 	private $isAdminUser;
+	private $isSecAdmin;
 	/** @var bool */
 	private $isSubAdmin;
 	/** @var IAppManager */
@@ -97,6 +98,7 @@ class SecurityMiddleware extends Middleware {
 								string $appName,
 								bool $isLoggedIn,
 								bool $isAdminUser,
+								bool $isSecAdmin,
 								bool $isSubAdmin,
 								IAppManager $appManager,
 								IL10N $l10n
@@ -109,6 +111,7 @@ class SecurityMiddleware extends Middleware {
 		$this->logger = $logger;
 		$this->isLoggedIn = $isLoggedIn;
 		$this->isAdminUser = $isAdminUser;
+		$this->isSecAdmin = $isSecAdmin;
 		$this->isSubAdmin = $isSubAdmin;
 		$this->appManager = $appManager;
 		$this->l10n = $l10n;

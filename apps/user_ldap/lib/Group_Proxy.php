@@ -229,7 +229,6 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 				$groups = array_merge($groups, $backendGroups);
 			}
 		}
-
 		return $groups;
 	}
 

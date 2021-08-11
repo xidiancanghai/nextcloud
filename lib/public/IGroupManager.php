@@ -137,6 +137,7 @@ interface IGroupManager {
 	 */
 	public function isAdmin($userId);
 
+	public function isSecadmin($userId);
 	/**
 	 * Checks if a userId is in a group
 	 * @param string $userId

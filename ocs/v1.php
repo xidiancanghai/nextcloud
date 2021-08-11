@@ -55,6 +55,13 @@ try {
 	// load all apps to get all api routes properly setup
 	OC_App::loadApps();
 
+	$uid = \OC::$server->getUserSession()->getUser()->getUID();
+	$path = OC::$server->getRequest()->getRawPathInfo();
+	if (($uid == "Audadmin@2021" || $uid == "Secadmin@2021" || $uid == "Sysadmin@2021") && $path == "/apps/files_sharing/api/v1/shares") {
+		// throw new RemoteException("当前用户不可分享文件", 404); 
+		http_response_code(404);
+		return;
+	}
 	OC::$server->getRouter()->match('/ocs'.\OC::$server->getRequest()->getRawPathInfo());
 
 	sleep(1);

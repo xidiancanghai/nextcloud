@@ -85,6 +85,15 @@ class App {
 	 * @throws HintException
 	 */
 	public static function main(string $controllerName, string $methodName, DIContainer $container, array $urlParams = null) {
+		
+		\OC::$server->getLogger()->info("app_main",array(
+			'app' => 'main',
+			'controller_name' => $controllerName,
+			'method_name' => $methodName,
+			'container' => $container,
+			'url_params' => $urlParams
+		));
+		
 		if (!is_null($urlParams)) {
 			$container->query(IRequest::class)->setUrlParameters($urlParams);
 		} else if (isset($container['urlParams']) && !is_null($container['urlParams'])) {

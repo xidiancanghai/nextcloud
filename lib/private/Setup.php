@@ -281,6 +281,12 @@ class Setup {
 		if(empty($options['adminpass'])) {
 			$error[] = $l->t('Set an admin password.');
 		}
+		if (empty($options['secadminpass'])) {
+			$error[] = $l->t("Set an secadmin password.");
+		}
+		if (empty($options['audadminpass'])) {
+			$error[] = $l->t("Set an audadmin password.");
+		}
 		if(empty($options['directory'])) {
 			$options['directory'] = \OC::$SERVERROOT."/data";
 		}
@@ -292,6 +298,12 @@ class Setup {
 		$username = htmlspecialchars_decode($options['adminlogin']);
 		$password = htmlspecialchars_decode($options['adminpass']);
 		$dataDir = htmlspecialchars_decode($options['directory']);
+
+		$secUserName = htmlspecialchars_decode($options['secadminlogin']);
+		$secPassword = htmlspecialchars_decode($options['secadminpass']);
+
+		$audUserName = htmlspecialchars_decode($options['audadminlogin']);
+		$audPassword = htmlspecialchars_decode($options['audadminpass']);
 
 		$class = self::$dbSetupClasses[$dbType];
 		/** @var \OC\Setup\AbstractDatabase $dbSetup */
@@ -371,15 +383,14 @@ class Setup {
 		}
 
 		//create the user and group
-		$user =  null;
-		try {
-			$user = \OC::$server->getUserManager()->createUser($username, $password);
-			if (!$user) {
-				$error[] = "User <$username> could not be created.";
-			}
-		} catch(Exception $exception) {
-			$error[] = $exception->getMessage();
-		}
+		$sysAdminUser =  null;
+		$secAdminUser = null;
+		$audAdminUser = null;
+
+		$this->createUser($username, $password, $sysAdminUser, $error);
+		$this->createuser($secUserName, $secPassword,$secAdminUser, $error);
+		$this->createuser($audUserName, $audPassword,$audAdminUser, $error);
+	
 
 		if (empty($error)) {
 			$config = \OC::$server->getConfig();
@@ -388,7 +399,13 @@ class Setup {
 			$config->setAppValue('core', 'vendor', $this->getVendor());
 
 			$group =\OC::$server->getGroupManager()->createGroup('admin');
-			$group->addUser($user);
+			$group->addUser($sysAdminUser);
+			$group->addUser($secAdminUser);
+			//$group->addUser($audAdminUser);
+			\OC::$server->GetGroupManager()->createGroup("机密");
+			\OC::$server->GetGroupManager()->createGroup("秘密");
+			\OC::$server->GetGroupManager()->createGroup("内部");
+			\OC::$server->GetGroupManager()->createGroup("公开");
 
 			// Install shipped apps and specified app bundles
 			Installer::installShippedApps();
@@ -424,11 +441,25 @@ class Setup {
 
 			// Set email for admin
 			if (!empty($options['adminemail'])) {
-				$config->setUserValue($user->getUID(), 'settings', 'email', $options['adminemail']);
+				$config->setUserValue($sysAdminUser->getUID(), 'settings', 'email', $options['adminemail']);
 			}
 		}
 
 		return $error;
+	}
+
+	public function createUser($username,$password, &$user, &$error) {
+		try {
+			$user = \OC::$server->getUserManager()->get($username);
+			if ($user == null) {
+				$user = \OC::$server->getUserManager()->createUser($username, $password);
+			} else {
+				\OC::$server->getUserManager()->setPassword($username, $password);
+			}
+			$user = \OC::$server->getUserManager()->get($username);
+		} catch(Exception $exception) {
+			$error[] = $exception->getMessage();
+		}
 	}
 
 	public static function installBackgroundJobs() {

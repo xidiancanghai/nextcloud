@@ -120,7 +120,6 @@ try {
 		// an upgrade, return a 503 directly
 		throw new RemoteException('Service unavailable', 503);
 	}
-
 	$request = \OC::$server->getRequest();
 	$pathInfo = $request->getPathInfo();
 	if ($pathInfo === false || $pathInfo === '') {
@@ -132,6 +131,16 @@ try {
 	$service=substr($pathInfo, 1, $pos-1);
 
 	$file = resolveService($service);
+
+	$uid = \OC::$server->getUserSession()->getUser()->getUID();
+	if (($uid == "Audadmin@2021" || $uid == "Secadmin@2021" || $uid == "Sysadmin@2021")) {
+		// if ($_SERVER["REQUEST_METHOD"] == "PROPFIND") {
+		// 	throw new RemoteException("当前用户不可创建文件夹", 404); 
+		// }
+		if ($_SERVER['REQUEST_METHOD'] == "PUT") {
+			throw new RemoteException("当前用户不可上传文件", 404); 
+		}
+	}
 
 	if(is_null($file)) {
 		throw new RemoteException('Path not found', 404);
@@ -152,9 +161,6 @@ try {
 			$file =  OC::$SERVERROOT .'/'. $file;
 			break;
 		default:
-			if (!\OC::$server->getAppManager()->isInstalled($app)) {
-				throw new RemoteException('App not installed: ' . $app);
-			}
 			OC_App::loadApp($app);
 			$file = OC_App::getAppPath($app) .'/'. $parts[1];
 			break;

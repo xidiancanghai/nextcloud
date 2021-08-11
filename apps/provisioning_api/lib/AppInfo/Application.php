@@ -56,10 +56,12 @@ class Application extends App {
 		$container->registerService('ProvisioningApiMiddleware', function(SimpleContainer $c) use ($server) {
 			$user = $server->getUserManager()->get($c['UserId']);
 			$isAdmin = $user !== null ? $server->getGroupManager()->isAdmin($user->getUID()) : false;
+			$isSecAdmin = $user !== null ? $server->getGroupManager()->isSecAdmin($user->getUID()) : false;
 			$isSubAdmin = $user !== null ? $server->getGroupManager()->getSubAdmin()->isSubAdmin($user) : false;
 			return new ProvisioningApiMiddleware(
 				$c->query(IControllerMethodReflector::class),
 				$isAdmin,
+				$isSecAdmin,
 				$isSubAdmin
 			);
 		});

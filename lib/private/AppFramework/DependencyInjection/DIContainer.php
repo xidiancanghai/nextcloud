@@ -219,6 +219,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 				$c['AppName'],
 				$server->getUserSession()->isLoggedIn(),
 				$server->getGroupManager()->isAdmin($this->getUserId()),
+				$server->getGroupManager()->isSecAdmin($this->getUserId()),
 				$server->getUserSession()->getUser() !== null && $server->query(ISubAdmin::class)->isSubAdmin($server->getUserSession()->getUser()),
 				$server->getAppManager(),
 				$server->getL10N('lib')
@@ -336,6 +337,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	public function isAdminUser() {
 		$uid = $this->getUserId();
 		return \OC_User::isAdminUser($uid);
+	}
+
+	public function isSecAdmin() {
+		$uid = $this->getUserId();
+		return \OC_User::isSecAdminUser($uid);
 	}
 
 	private function getUserId() {

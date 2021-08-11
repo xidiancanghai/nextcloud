@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Library/WebServer/Documents/nextcloud'
+make: Leaving directory `/Library/WebServer/Documents/nextcloud'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+ 

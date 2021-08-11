@@ -213,7 +213,6 @@ class Log implements ILogger {
 			$replace['{' . $key . '}'] = $val;
 		}
 		$message = strtr($message, $replace);
-
 		try {
 			if ($level >= $minLevel) {
 				$this->writeLog($app, $message, $level);

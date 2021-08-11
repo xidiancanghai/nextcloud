@@ -124,7 +124,6 @@ class SubAdmin extends PublicEmitter implements ISubAdmin {
 			}
 		}
 		$result->closeCursor();
-
 		return $groups;
 	}
 

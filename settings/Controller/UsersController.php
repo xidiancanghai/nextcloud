@@ -79,6 +79,8 @@ class UsersController extends Controller {
 	private $config;
 	/** @var bool */
 	private $isAdmin;
+
+	private $isSecAdmin;
 	/** @var IL10N */
 	private $l10n;
 	/** @var IMailer */
@@ -104,6 +106,7 @@ class UsersController extends Controller {
 								IUserSession $userSession,
 								IConfig $config,
 								bool $isAdmin,
+								bool $isSecAdmin,
 								IL10N $l10n,
 								IMailer $mailer,
 								IFactory $l10nFactory,
@@ -118,6 +121,7 @@ class UsersController extends Controller {
 		$this->userSession = $userSession;
 		$this->config = $config;
 		$this->isAdmin = $isAdmin;
+		$this->isSecAdmin = $isSecAdmin;
 		$this->l10n = $l10n;
 		$this->mailer = $mailer;
 		$this->l10nFactory = $l10nFactory;
@@ -177,6 +181,7 @@ class UsersController extends Controller {
 		$groupsInfo = new \OC\Group\MetaData(
 			$uid,
 			$this->isAdmin,
+			$this->isSecAdmin,
 			$this->groupManager,
 			$this->userSession
 		);

@@ -144,4 +144,8 @@ interface IGroup {
 	 * @since 16.0.0
 	 */
 	public function hideFromCollaboration(): bool;
+
+	public function isAdmin();
+
+	public function isSecAdmin();
 }

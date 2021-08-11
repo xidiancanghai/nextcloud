@@ -567,7 +567,6 @@ class OC {
 		}
 		spl_autoload_register(array(self::$loader, 'load'));
 		$loaderEnd = microtime(true);
-
 		self::$CLI = (php_sapi_name() == 'cli');
 
 		// Add default composer PSR-4 autoloader
@@ -915,7 +914,6 @@ class OC {
 	 * Handle the request
 	 */
 	public static function handleRequest() {
-
 		\OC::$server->getEventLogger()->start('handle_request', 'Handle request');
 		$systemConfig = \OC::$server->getSystemConfig();
 
@@ -940,6 +938,9 @@ class OC {
 		if ($requestPath === '/heartbeat') {
 			return;
 		}
+		\OC::$server->getLogger()->warning(" path = ".$requestPath, [
+			'app' => 'get_path',
+		]);
 		if (substr($requestPath, -3) !== '.js') { // we need these files during the upgrade
 			self::checkMaintenanceMode();
 
@@ -972,7 +973,6 @@ class OC {
 
 		// Always load authentication apps
 		OC_App::loadApps(['authentication']);
-
 		// Load minimum set of apps
 		if (!\OCP\Util::needUpgrade()
 			&& !((bool) $systemConfig->getValue('maintenance', false))) {
@@ -985,7 +985,6 @@ class OC {
 				self::handleLogin($request);
 			}
 		}
-
 		if (!self::$CLI) {
 			try {
 				if (!((bool) $systemConfig->getValue('maintenance', false)) && !\OCP\Util::needUpgrade()) {
@@ -993,6 +992,9 @@ class OC {
 					OC_App::loadApps();
 				}
 				OC_Util::setupFS();
+				\OC::$server->getLogger()->warning(" path = ".$requestPath, [
+					'app' => 'get_path1',
+				]);
 				OC::$server->getRouter()->match(\OC::$server->getRequest()->getRawPathInfo());
 				return;
 			} catch (Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {
@@ -1002,7 +1004,6 @@ class OC {
 				return;
 			}
 		}
-
 		// Handle WebDAV
 		if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'PROPFIND') {
 			// not allowed any more to prevent people
@@ -1011,7 +1012,6 @@ class OC {
 			http_response_code(405);
 			return;
 		}
-
 		// Someone is logged in
 		if (\OC::$server->getUserSession()->isLoggedIn()) {
 			OC_App::loadApps();

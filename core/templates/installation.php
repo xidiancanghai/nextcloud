@@ -37,9 +37,9 @@ script('core', [
 	<fieldset id="adminaccount">
 		<legend><?php print_unescaped($l->t( 'Create an <strong>admin account</strong>' )); ?></legend>
 		<p class="grouptop">
-			<input type="text" name="adminlogin" id="adminlogin"
+			<input type="text" name="adminlogin" id="adminlogin" readonly="readonly"
 				placeholder="<?php p($l->t( 'Username' )); ?>"
-				value="<?php p($_['adminlogin']); ?>"
+				value="Sysadmin@2021"
 				autocomplete="off" autocapitalize="none" autocorrect="off" autofocus required>
 			<label for="adminlogin" class="infield"><?php p($l->t( 'Username' )); ?></label>
 		</p>
@@ -53,6 +53,47 @@ script('core', [
 			<label for="show"></label>
 		</p>
 	</fieldset>
+
+	<fieldset id="secadminaccount">
+		<legend><?php print_unescaped($l->t( 'Create an <strong>secadmin account</strong>' )); ?></legend>
+		<p class="grouptop">
+			<input type="text" name="secadminlogin" id="secadminlogin" readonly="readonly"
+				placeholder="<?php p($l->t( 'Username' )); ?>"
+				value="Secadmin@2021"
+				autocomplete="off" autocapitalize="none" autocorrect="off" autofocus required>
+			<label for="secadminlogin" class="infield"><?php p($l->t( 'Username' )); ?></label>
+		</p>
+		<p class="groupbottom">
+			<input type="password" name="secadminpass" data-typetoggle="#show" id="secadminpass"
+				placeholder="<?php p($l->t( 'Password' )); ?>"
+				value="<?php p($_['adminpass']); ?>"
+				autocomplete="off" autocapitalize="none" autocorrect="off" required>
+			<label for="secadminpass" class="infield"><?php p($l->t( 'Password' )); ?></label>
+			<input type="checkbox" id="show" class="hidden-visually" name="show">
+			<label for="show"></label>
+		</p>
+	</fieldset>
+
+	<fieldset id="audadminaccount">
+		<legend><?php print_unescaped($l->t( 'Create an <strong>secadmin account</strong>' )); ?></legend>
+		<p class="grouptop">
+			<input type="text" name="audadminlogin" id="audadminlogin" readonly="readonly"
+				placeholder="<?php p($l->t( 'Username' )); ?>"
+				value="Audadmin@2021"
+				autocomplete="off" autocapitalize="none" autocorrect="off" autofocus required>
+			<label for="audadminlogin" class="infield"><?php p($l->t( 'Username' )); ?></label>
+		</p>
+		<p class="groupbottom">
+			<input type="password" name="audadminpass" data-typetoggle="#show" id="audadminpass"
+				placeholder="<?php p($l->t( 'Password' )); ?>"
+				value="<?php p($_['adminpass']); ?>"
+				autocomplete="off" autocapitalize="none" autocorrect="off" required>
+			<label for="audadminpass" class="infield"><?php p($l->t( 'Password' )); ?></label>
+			<input type="checkbox" id="show" class="hidden-visually" name="show">
+			<label for="show"></label>
+		</p>
+	</fieldset>
+
 
 	<?php if(!$_['directoryIsSet'] OR !$_['dbIsSet'] OR count($_['errors']) > 0): ?>
 	<fieldset id="advancedHeader">

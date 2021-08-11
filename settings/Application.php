@@ -79,6 +79,9 @@ class Application extends App {
 		$container->registerService('isAdmin', function() {
 			return \OC_User::isAdminUser(\OC_User::getUser());
 		});
+		$container->registerService('isSecAdmin',function() {
+			return \OC_User::isSecAdmin(\OC_User::getUser());
+		});
 		/** FIXME: Remove once OC_SubAdmin is non-static and mockable */
 		$container->registerService('isSubAdmin', function(IContainer $c) {
 			$userObject = \OC::$server->getUserSession()->getUser();

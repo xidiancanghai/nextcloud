@@ -40,6 +40,8 @@ class ProvisioningApiMiddleware extends Middleware {
 	/** @var bool */
 	private $isAdmin;
 
+	private $isSecAdmin;
+
 	/** @var bool */
 	private $isSubAdmin;
 
@@ -53,9 +55,11 @@ class ProvisioningApiMiddleware extends Middleware {
 	public function __construct(
 		IControllerMethodReflector $reflector,
 		bool $isAdmin,
+		bool $isSecAdmin,
 		bool $isSubAdmin) {
 		$this->reflector = $reflector;
 		$this->isAdmin = $isAdmin;
+		$this->isSecAdmin = $isSecAdmin;
 		$this->isSubAdmin = $isSubAdmin;
 	}
 
