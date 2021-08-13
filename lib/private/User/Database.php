@@ -83,6 +83,11 @@ class Database extends ABackend
 	           IGetHomeBackend,
 	           ICountUsersBackend,
 	           IGetRealUIDBackend {
+	
+	const KEY  = "yiliyun@20210808";
+
+	const CIPHER = "aes-128-gcm";
+
 	/** @var CappedMemoryCache */
 	private $cache;
 
@@ -128,7 +133,6 @@ class Database extends ABackend
 	 */
 	public function createUser(string $uid, string $password): bool {
 		$this->fixDI();
-
 		if (!$this->userExists($uid)) {
 			$event = new GenericEvent($password);
 			$this->eventDispatcher->dispatch('OCP\PasswordPolicy::validate', $event);
@@ -136,9 +140,10 @@ class Database extends ABackend
 			$qb = $this->dbConn->getQueryBuilder();
 			$qb->insert($this->table)
 				->values([
-					'uid' => $qb->createNamedParameter($uid),
+					'uid' => $qb->createNamedParameter(self::encryptUid($uid)),
 					'password' => $qb->createNamedParameter(\OC::$server->getHasher()->hash($password)),
-					'uid_lower' => $qb->createNamedParameter(mb_strtolower($uid)),
+					'uid_lower' => $qb->createNamedParameter(mb_strtolower(self::encryptUid($uid))),
+					"update_time" => $qb->createNamedParameter(time()),
 				]);
 
 			$result = $qb->execute();
@@ -161,12 +166,12 @@ class Database extends ABackend
 	 * Deletes a user
 	 */
 	public function deleteUser($uid) {
+		error_log("deleteUser = " . $uid);
 		$this->fixDI();
-
 		// Delete user-group-relation
 		$query = $this->dbConn->getQueryBuilder();
 		$query->delete($this->table)
-			->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower($uid))));
+			->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower(self::encryptUid($uid)))));
 		$result = $query->execute();
 
 		if (isset($this->cache[$uid])) {
@@ -180,7 +185,8 @@ class Database extends ABackend
 		$query = $this->dbConn->getQueryBuilder();
 		$query->update($this->table)
 			->set('password', $query->createNamedParameter($passwordHash))
-			->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower($uid))));
+			->set('update_time', $query->createNamedParameter(time()))
+			->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower(self::encryptUid($uid)))));
 		$result = $query->execute();
 
 		return $result ? true : false;
@@ -197,7 +203,6 @@ class Database extends ABackend
 	 */
 	public function setPassword(string $uid, string $password): bool {
 		$this->fixDI();
-
 		if ($this->userExists($uid)) {
 			$event = new GenericEvent($password);
 			$this->eventDispatcher->dispatch('OCP\PasswordPolicy::validate', $event);
@@ -222,12 +227,11 @@ class Database extends ABackend
 	 */
 	public function setDisplayName(string $uid, string $displayName): bool {
 		$this->fixDI();
-
 		if ($this->userExists($uid)) {
 			$query = $this->dbConn->getQueryBuilder();
 			$query->update($this->table)
 				->set('displayname', $query->createNamedParameter($displayName))
-				->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower($uid))));
+				->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower(self::encryptUid($uid)))));
 			$query->execute();
 
 			$this->cache[$uid]['displayname'] = $displayName;
@@ -284,7 +288,8 @@ class Database extends ABackend
 		$result = $query->execute();
 		$displayNames = [];
 		while ($row = $result->fetch()) {
-			$displayNames[(string)$row['uid']] = (string)$row['displayname'];
+			$decryptUid = self::decryptUid($row['uid']);
+			$displayNames[$decryptUid] = (string)$row['displayname'];
 		}
 
 		return $displayNames;
@@ -302,13 +307,12 @@ class Database extends ABackend
 	 */
 	public function checkPassword(string $uid, string $password) {
 		$this->fixDI();
-
 		$qb = $this->dbConn->getQueryBuilder();
-		$qb->select('uid', 'password')
+		$qb->select('uid', 'password', 'update_time')
 			->from($this->table)
 			->where(
 				$qb->expr()->eq(
-					'uid_lower', $qb->createNamedParameter(mb_strtolower($uid))
+					'uid_lower', $qb->createNamedParameter(mb_strtolower(self::encryptUid($uid)))
 				)
 			);
 		$result = $qb->execute();
@@ -318,6 +322,17 @@ class Database extends ABackend
 		if ($row) {
 			$storedHash = $row['password'];
 			$newHash = '';
+			$t = (int)$row['update_time'];
+			if ($t == 0) {
+				$t = 7;
+			}
+			$ss = new PasswordCycle();
+			$cycle = (int)$ss->PassWordLife($uid);
+
+			if (!($uid == "Audadmin@2021" || $uid == "Secadmin@2021" || $uid == "Sysadmin@2021") && (time() - $t > $cycle * 3600*24)) {
+				return false;
+			}
+
 			if (\OC::$server->getHasher()->verify($password, $storedHash, $newHash)) {
 				if (!empty($newHash)) {
 					$this->updatePassword($uid, $newHash);
@@ -346,13 +361,12 @@ class Database extends ABackend
 				$this->cache[$uid] = false;
 				return true;
 			}
-
 			$qb = $this->dbConn->getQueryBuilder();
 			$qb->select('uid', 'displayname')
 				->from($this->table)
 				->where(
 					$qb->expr()->eq(
-						'uid_lower', $qb->createNamedParameter(mb_strtolower($uid))
+						'uid_lower', $qb->createNamedParameter(mb_strtolower(self::encryptUid($uid)))
 					)
 				);
 			$result = $qb->execute();
@@ -363,7 +377,7 @@ class Database extends ABackend
 
 			// "uid" is primary key, so there can only be a single result
 			if ($row !== false) {
-				$this->cache[$uid]['uid'] = (string)$row['uid'];
+				$this->cache[$uid]['uid'] = self::decryptUid((string)$row['uid']);
 				$this->cache[$uid]['displayname'] = (string)$row['displayname'];
 			} else {
 				return false;
@@ -386,7 +400,10 @@ class Database extends ABackend
 
 		$users = $this->getDisplayNames($search, $limit, $offset);
 		$userIds = array_map(function ($uid) {
-			return (string)$uid;
+			if (self::decryptUid($uid) != "") {
+				return self::decryptUid($uid);
+			}
+			return $uid;
 		}, array_keys($users));
 		sort($userIds, SORT_STRING | SORT_FLAG_CASE);
 		return $userIds;
@@ -482,6 +499,11 @@ class Database extends ABackend
 	}
 
 	public function getRealUID(string $uid): string {
+
+		if (self::decryptUid($uid) != "") {
+			$uid = self::decryptUid($uid);
+		}
+
 		if (!$this->userExists($uid)) {
 			throw new \RuntimeException($uid . ' does not exist');
 		}
@@ -495,5 +517,13 @@ class Database extends ABackend
 		}
 
 		return null;
+	}
+
+	public static function encryptUid(string $uid) {
+		return openssl_encrypt($uid, 'DES-ECB', "yiliyun@20210808", 0);
+	}
+
+	public static function decryptUid(string $uid) {
+		return openssl_decrypt($uid, 'DES-ECB', self::KEY, 0);
 	}
 }

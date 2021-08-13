@@ -52,6 +52,7 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
+use OC\User\PasswordCycle;
 
 class UsersController extends AUserData {
 
@@ -513,6 +514,7 @@ class UsersController extends AUserData {
 				$permittedFields[] = AccountManager::PROPERTY_WEBSITE;
 				$permittedFields[] = AccountManager::PROPERTY_TWITTER;
 				$permittedFields[] = 'quota';
+				$permittedFields[] = 'set_password_life';
 			} else {
 				// No rights
 				throw new OCSException('', \OCP\API::RESPOND_UNAUTHORISED);
@@ -527,6 +529,9 @@ class UsersController extends AUserData {
 			case 'display':
 			case AccountManager::PROPERTY_DISPLAYNAME:
 				$targetUser->setDisplayName($value);
+				break;
+			case 'set_password_life':
+				$this->setPasswordCycle($userId, $value);
 				break;
 			case 'quota':
 				$quota = $value;
@@ -976,5 +981,10 @@ class UsersController extends AUserData {
 		}
 
 		return new DataResponse();
+	}
+
+	public function setPasswordCycle($uid, $day) {
+		$ss = new PasswordCycle();
+		$ss->Update($uid,$day);
 	}
 }

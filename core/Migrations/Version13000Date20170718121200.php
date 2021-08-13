@@ -260,6 +260,21 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['gid']);
 		}
 
+		if (!$schema->hasTable('password_cycle')) {
+			$table = $schema->createTable('password_cycle');
+			$table->addColumn('uid', 'string', [
+				'notnull' => true,
+				'length' => 64,
+				'default' => '',
+			]);
+			$table->addColumn('life', 'integer', [
+				'autoincrement' => false,
+				'notnull' => true,
+				'length' => 4,
+			]);
+			$table->setPrimaryKey(['uid']);
+		}
+
 		if (!$schema->hasTable('preferences')) {
 			$table = $schema->createTable('preferences');
 			$table->addColumn('userid', 'string', [
@@ -460,6 +475,12 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 255,
 				'default' => '',
+			]);
+			$table->addColumn('update_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
 			]);
 			$table->setPrimaryKey(['uid']);
 		}

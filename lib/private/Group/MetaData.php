@@ -191,8 +191,24 @@ class MetaData {
 	 * @return \OCP\IGroup[]
 	 */
 	public function getGroups($search = '') {
-		if($this->isAdmin) {
-			return $this->groupManager->search($search);
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		$isSecAdmin = $uid == "Secadmin@2021";
+		if($this->isAdmin || $isSecAdmin) {
+			// 过滤
+			$secGroups = array();
+			$nomormalGroups = array();
+			foreach ($this->groupManager->search($search) as $group) {
+				$gid = $group->getGid();
+				if ($gid == "公开" || $gid == "内部" || $gid == "机密" || $gid == "秘密") {
+					array_push($secGroups,$group);
+				} else {
+					array_push($nomormalGroups,$group);
+				}
+			}
+			if ($this->isAdmin && !$isSecAdmin)  {
+				return $nomormalGroups;
+			}
+			return $secGroups;
 		} else {
 			$userObject = $this->userSession->getUser();
 			if($userObject !== null) {

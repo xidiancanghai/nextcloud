@@ -60,6 +60,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @package OC\User
  */
 class Manager extends PublicEmitter implements IUserManager {
+
+
+	//设置AES秘钥
+	private  $aesKey = 'bUYJ3nTV6VBasdJF'; //此处填写前后端共同约定的秘钥
+
+
 	/**
 	 * @var \OCP\UserInterface[] $backends
 	 */
@@ -141,6 +147,26 @@ class Manager extends PublicEmitter implements IUserManager {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param string $uid the user
+	 * @param string $password
+	 */
+	public function setPassword($uid, $password) {
+		if (is_null($uid) || $uid === '' || $uid === false) {
+			return false;
+		}
+		if (is_null($password) || $password === '' || $password === false) {
+			return false;
+		}
+		foreach ($this->backends as $backend) {
+			if ($backend->userExists($uid)) {
+				$dataBase = new Database();
+				$dataBase->setPassword($uid,$password);
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -237,7 +263,6 @@ class Manager extends PublicEmitter implements IUserManager {
 				}
 			}
 		}
-
 		uasort($users, function ($a, $b) {
 			/**
 			 * @var \OC\User\User $a

@@ -145,4 +145,6 @@ interface IGroupManager {
 	 * @since 8.0.0
 	 */
 	public function isInGroup($userId, $group);
+
+	public function getSubAdmin();
 }
