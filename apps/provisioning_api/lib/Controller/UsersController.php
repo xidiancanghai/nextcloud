@@ -53,6 +53,7 @@ use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 use OC\User\PasswordCycle;
+use OC\User\LoginIp;
 
 class UsersController extends AUserData {
 
@@ -439,6 +440,35 @@ class UsersController extends AUserData {
 		}
 
 		return new DataResponse($permittedFields);
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 * @NoSubAdminRequired
+	 * @PasswordConfirmationRequired
+	 *
+	 * edit users
+	 *
+	 * @param string $userId
+	 * @param int $page
+	 * @param int $limit
+	 * @return DataResponse
+	 * @throws OCSException
+	 */
+
+
+	public function getLoginIp(string $userId, int $page = 0, int $limit = 50) {
+
+		$login = new LoginIp();
+
+		error_log("user_id " . $userId . " page " . $page . " limit " . $limit);
+
+		$list = $login->GetLog($userId, $page, $limit);
+
+		$rsp = new DataResponse();
+		$rsp->setData($list);
+		return $rsp;
 	}
 
 	/**

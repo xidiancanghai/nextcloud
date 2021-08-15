@@ -983,6 +983,7 @@ class OC {
 				// For guests: Load only filesystem and logging
 				OC_App::loadApps(array('filesystem', 'logging'));
 				self::handleLogin($request);
+				// 登陆完成记录下ip
 			}
 		}
 

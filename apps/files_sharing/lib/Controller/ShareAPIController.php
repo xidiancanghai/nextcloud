@@ -57,6 +57,8 @@ use OCP\Share\Exceptions\GenericShareException;
 use OCP\Lock\ILockingProvider;
 use OCP\Share\IShare;
 use OCA\Files_Sharing\External\Storage;
+use OC\User\FileLevel;
+use OC\Group\Database;
 
 /**
  * Class Share20OCS
@@ -358,6 +360,57 @@ class ShareAPIController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $path
+	 * @param string $level
+	 *
+	 * @return DataResponse
+	 * @throws NotFoundException
+	 * @throws OCSBadRequestException
+	 * @throws OCSException
+	 * @throws OCSForbiddenException
+	 * @throws OCSNotFoundException
+	 * @throws \OCP\Files\InvalidPathException
+	 * @suppress PhanUndeclaredClassMethod
+	 */
+	public function setLevel(
+		string $path ,
+		string $level = '公开'
+	) {
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		
+		$data = new FileLevel();
+		$data->Update($uid, $path, $level);
+		
+		return new DataResponse();
+    }
+
+
+	public function compareLevel($a, $b)  {
+
+		$levels = array('机密','秘密','内部','公开');
+
+		$indexA = 0;
+		$indexB = 0;
+
+		foreach ($levels as $key => $value) {
+
+			if ($value == $a) {
+				$indexA = $key;
+			}
+
+			if ($value == $b) {
+				$indexB = $key;
+			}
+
+		}
+
+		return $indexA - $indexB;
+	}
+
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $path
 	 * @param int $permissions
 	 * @param int $shareType
 	 * @param string $shareWith
@@ -387,8 +440,24 @@ class ShareAPIController extends OCSController {
 		string $expireDate = '',
 		string $label = ''
 	): DataResponse {
-		$share = $this->shareManager->newShare();
 
+
+		if ($shareWith != '') {
+			$selfUid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+			$db = new Database();
+			$selfLevel = $db->userSecLevel($selfUid);
+			$toLevel = $db->userSecLevel($shareWith);
+	
+			$diff = $this->compareLevel($selfLevel, $toLevel);
+	
+			// 不能把文件给低权限用户
+			if ($diff < 0) {
+				throw new OCSNotFoundException($this->l->t("can't grant authorization lower "));
+			}
+	
+		}
+
+		$share = $this->shareManager->newShare();
 		if ($permissions === null) {
 			$permissions = $this->config->getAppValue('core', 'shareapi_default_permissions', Constants::PERMISSION_ALL);
 		}

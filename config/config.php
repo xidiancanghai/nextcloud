@@ -1,8 +1,8 @@
 <?php
 $CONFIG = array (
-  'instanceid' => 'ocfu0v6dhel2',
-  'passwordsalt' => 'EQowqJte1sHjOUkjYbSTLeSUUcNjNB',
-  'secret' => 'bnIf5AtO7KyECEk8RkY2esY7IeV2ohYe1nn2CmLB9GG3YxKO',
+  'instanceid' => 'ocnf1cz61qm4',
+  'passwordsalt' => 'CcDDpAJpiE2T5p0CBLNH7m75Cs24xl',
+  'secret' => 'BQ36ZK+bMLJ18zYeyQgScHp6WQqDLJSQVQMrpZrgzbsH9AvO',
   'trusted_domains' => 
   array (
     0 => '127.0.0.1:8001',

@@ -314,6 +314,36 @@ class Database extends ABackend
 		return false;
 	}
 
+	public function userSecLevel(string $uid) {
+		$levels = array('机密','秘密','内部','公开');
+		
+		$this->fixDI();
+
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('gid')
+			->from('group_user')
+			->where($query->expr()->eq('uid', $query->createNamedParameter($uid)));
+
+		$result = $query->execute();
+
+		
+		$gids = array();
+		
+		while ($row = $result->fetch()) {
+			$gids[] = $row['gid'];
+		}
+		
+		foreach ($levels as $level) {
+			foreach ($gids as $gid) {
+				if ($gid == $level) {
+					return $level;
+				}	
+			}
+		}
+		$result->closeCursor();
+		return "公开";
+	}
+
 	/**
 	 * get a list of all users in a group
 	 * @param string $gid

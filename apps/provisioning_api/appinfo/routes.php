@@ -61,6 +61,7 @@ return [
 		['root' => '/cloud', 'name' => 'Users#addSubAdmin', 'url' => '/users/{userId}/subadmins', 'verb' => 'POST'],
 		['root' => '/cloud', 'name' => 'Users#removeSubAdmin', 'url' => '/users/{userId}/subadmins', 'verb' => 'DELETE'],
 		['root' => '/cloud', 'name' => 'Users#resendWelcomeMessage', 'url' => '/users/{userId}/welcome', 'verb' => 'POST'],
+		['root' => '/cloud', 'name' => 'Users#getLoginIp', 'url' => '/admin/login_log', 'verb' => 'GET'],
 
 		// Config
 		['name' => 'AppConfig#getApps', 'url' => '/api/v1/config/apps', 'verb' => 'GET'],
@@ -68,5 +69,8 @@ return [
 		['name' => 'AppConfig#getValue', 'url' => '/api/v1/config/apps/{app}/{key}', 'verb' => 'GET'],
 		['name' => 'AppConfig#setValue', 'url' => '/api/v1/config/apps/{app}/{key}', 'verb' => 'POST'],
 		['name' => 'AppConfig#deleteKey', 'url' => '/api/v1/config/apps/{app}/{key}', 'verb' => 'DELETE'],
+
+		// Admin
+		//['name' => 'Admin#getLoginIp', 'url' => '/admin/login_log', 'verb' => 'GET']
 	],
 ];

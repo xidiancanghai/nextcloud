@@ -137,12 +137,10 @@ class Dispatcher {
 	 */
 	private function executeController(Controller $controller, string $methodName): Response {
 		$arguments = [];
-
 		// valid types that will be casted
 		$types = ['int', 'integer', 'bool', 'boolean', 'float'];
 
 		foreach($this->reflector->getParameters() as $param => $default) {
-
 			// try to get the parameter from the request object and cast
 			// it to the type annotated in the @param annotation
 			$value = $this->request->getParam($param, $default);

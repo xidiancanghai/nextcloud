@@ -275,6 +275,58 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['uid']);
 		}
 
+		if (!$schema->hasTable('file_level')) {
+			$table = $schema->createTable('file_level');
+			$table->addColumn('id', 'integer', [
+				'autoincrement' => true,
+				'length' => 11,
+			]);
+			$table->addColumn('uid', 'string', [
+				'notnull' => true,
+				'length' => 64,
+				'default' => '',
+			]);
+			$table->addColumn('path', 'string', [
+				'notnull' => true,
+				'length' => 512,
+				'default' => '',
+			]);
+			$table->addColumn('update_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->setPrimaryKey(['id']);
+			$table->addUniqueIndex(['uid','path']);
+		}
+
+		if (!$schema->hasTable('login_ip')) {
+			$table = $schema->createTable('login_ip');
+			$table->addColumn('id', 'integer', [
+				'autoincrement' => true,
+				'length' => 11,
+			]);
+			$table->addColumn('uid', 'string', [
+				'notnull' => true,
+				'length' => 64,
+				'default' => '',
+			]);
+			$table->addColumn('ip', 'string', [
+				'notnull' => true,
+				'length' => 32,
+				'default' => '',
+			]);
+			$table->addColumn('update_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->setPrimaryKey(['id']);
+			$table->addIndex(['uid']);
+		}
+
 		if (!$schema->hasTable('preferences')) {
 			$table = $schema->createTable('preferences');
 			$table->addColumn('userid', 'string', [

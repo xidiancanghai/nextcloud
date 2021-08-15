@@ -73,6 +73,11 @@ return [
 			'url'  => '/api/v1/shares/{id}',
 			'verb' => 'DELETE',
 		],
+		[
+			'name' => 'ShareAPI#setLevel',
+			'url'  => '/api/v1/set_level',
+			'verb' => 'POST',
+		],
 		/*
 		 * Deleted Shares
 		 */

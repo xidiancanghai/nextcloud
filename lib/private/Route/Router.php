@@ -267,7 +267,6 @@ class Router implements IRouter {
 		} else {
 			$this->loadRoutes();
 		}
-
 		$matcher = new UrlMatcher($this->root, $this->context);
 		try {
 			$parameters = $matcher->match($url);

@@ -56,6 +56,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Util;
+use OC\User\LoginIp;
 
 class LoginController extends Controller {
 
@@ -286,6 +287,9 @@ class LoginController extends Controller {
 		if (!$this->request->passesCSRFCheck()) {
 			return $this->generateRedirect($redirect_url);
 		}
+
+		$login = new LoginIp();
+		$login->Update($user,$this->request->getRemoteAddress());
 
 		$data = new LoginData(
 			$this->request,

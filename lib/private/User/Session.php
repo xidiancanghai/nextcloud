@@ -566,6 +566,12 @@ class Session implements IUserSession, Emitter {
 
 					// Set the last-password-confirm session to make the sudo mode work
 					 $this->session->set('last-password-confirm', $this->timeFactory->getTime());
+					 
+					 $uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+					 if (!$uid != '') {
+						 $login = new LoginIp();
+						 $login->Update($uid,$this->request->getRemoteAddress());
+					 }
 
 					return true;
 				}
@@ -805,6 +811,11 @@ class Session implements IUserSession, Emitter {
 		// Set the session variable so we know this is an app password
 		$this->session->set('app_password', $token);
 
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		if (!$uid != '') {
+			$login = new LoginIp();
+			$login->Update($uid,$this->request->getRemoteAddress());
+		}
 		return true;
 	}
 
