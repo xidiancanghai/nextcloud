@@ -142,7 +142,8 @@ class Manager extends PublicEmitter implements IUserManager {
 			return $this->cachedUsers[$uid];
 		}
 		foreach ($this->backends as $backend) {
-			if ($backend->userExists($uid)) {
+			$is = $backend->userExists($uid);
+			if ($is == true) {
 				return $this->getUserObject($uid, $backend);
 			}
 		}
@@ -181,12 +182,13 @@ class Manager extends PublicEmitter implements IUserManager {
 		if ($backend instanceof IGetRealUIDBackend) {
 			$uid = $backend->getRealUID($uid);
 		}
-
+		//error_log("uid = " . $uid . " backend = " . $backend);
 		if (isset($this->cachedUsers[$uid])) {
 			return $this->cachedUsers[$uid];
 		}
 
 		$user = new User($uid, $backend, $this->dispatcher, $this, $this->config);
+		//error_log("uid = " . $uid . " cache = " . $user->getUID());
 		if ($cacheUser) {
 			$this->cachedUsers[$uid] = $user;
 		}

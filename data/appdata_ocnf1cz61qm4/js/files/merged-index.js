@@ -2166,11 +2166,11 @@ OC.Uploader.prototype = _.extend({
 		 * Renders the menu with the currently set items
 		 */
 		render: function() {
-			this.$el.html(this.template({
-				uploadMaxHumanFileSize: 'TODO',
-				uploadLabel: t('files', 'Upload file'),
-				items: this._menuItems
-			}));
+			// this.$el.html(this.template({
+			// 	uploadMaxHumanFileSize: 'TODO',
+			// 	uploadLabel: t('files', 'Upload file'),
+			// 	items: this._menuItems
+			// }));
 
 			// Trigger upload action also with keyboard navigation on enter
 			this.$el.find('[for="file_upload_start"]').on('keyup', function(event) {

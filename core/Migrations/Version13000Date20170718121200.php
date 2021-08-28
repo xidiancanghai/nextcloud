@@ -262,17 +262,16 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 
 		if (!$schema->hasTable('password_cycle')) {
 			$table = $schema->createTable('password_cycle');
-			$table->addColumn('uid', 'string', [
-				'notnull' => true,
-				'length' => 64,
-				'default' => '',
+			$table->addColumn('id', 'integer', [
+				'autoincrement' => true,
+				'length' => 11,
 			]);
 			$table->addColumn('life', 'integer', [
 				'autoincrement' => false,
 				'notnull' => true,
 				'length' => 4,
 			]);
-			$table->setPrimaryKey(['uid']);
+			$table->setPrimaryKey(['id']);
 		}
 
 		if (!$schema->hasTable('file_level')) {
@@ -299,6 +298,20 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['id']);
 			$table->addUniqueIndex(['uid','path']);
+		}
+
+		if (!$schema->hasTable('file_type')) {
+			$table = $schema->createTable('file_type');
+			$table->addColumn('id', 'integer', [
+				'autoincrement' => true,
+				'length' => 11,
+			]);
+			$table->addColumn('file_types', 'string', [
+				'notnull' => true,
+				'length' => 1024,
+				'default' => 'exe,txt,doc,docx,xls',
+			]);
+			$table->setPrimaryKey(['id']);
 		}
 
 		if (!$schema->hasTable('login_ip')) {

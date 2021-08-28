@@ -131,12 +131,20 @@ try {
 	}
 	$service=substr($pathInfo, 1, $pos-1);
 
+	$uid = \OC::$server->getUserSession()->getUser()->getUID();
+	if (($uid == "Audadmin@2021" || $uid == "Secadmin@2021" || $uid == "Sysadmin@2021")) {
+		if ($_SERVER['REQUEST_METHOD'] == "PUT") {
+			throw new RemoteException("当前用户不可上传文件", 404); 
+		}
+	}
+	//error_log("path = " .$pathInfo);
+	//if ($_SERVER['REQUEST_METHOD'] == "PUT")
+
 	$file = resolveService($service);
 
 	if(is_null($file)) {
 		throw new RemoteException('Path not found', 404);
 	}
-
 	$file=ltrim($file, '/');
 
 	$parts=explode('/', $file, 2);

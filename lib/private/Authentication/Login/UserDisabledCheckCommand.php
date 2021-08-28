@@ -53,7 +53,6 @@ class UserDisabledCheckCommand extends ALoginCommand {
 
 			return LoginResult::failure($loginData, LoginController::LOGIN_MSG_USERDISABLED);
 		}
-
 		return $this->processNextOrFinishSuccessfully($loginData);
 	}
 

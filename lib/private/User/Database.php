@@ -318,17 +318,17 @@ class Database extends ABackend
 		$result = $qb->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
-
 		if ($row) {
 			$storedHash = $row['password'];
 			$newHash = '';
 			$t = (int)$row['update_time'];
-			if ($t == 0) {
-				$t = 7;
-			}
+			
 			$ss = new PasswordCycle();
-			$cycle = (int)$ss->PassWordLife($uid);
+			$cycle = (int)$ss->PassWordLife();
 
+			if ($cycle == 0) {
+				$cycle = 7;
+			}
 			if (!($uid == "Audadmin@2021" || $uid == "Secadmin@2021" || $uid == "Sysadmin@2021") && (time() - $t > $cycle * 3600*24)) {
 				return false;
 			}

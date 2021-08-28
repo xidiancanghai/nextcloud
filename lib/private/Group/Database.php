@@ -344,6 +344,19 @@ class Database extends ABackend
 		return "公开";
 	}
 
+	public function isInOneGroup(string $uid1, string $uid2)  {
+
+		$levels = array('机密','秘密','内部','公开');
+		
+		$group1 = $this->getUserGroups($uid1);
+		$group2 = $this->getUserGroups($uid2);
+
+		$group1 = array_diff($group1,$levels);
+		$group2 = array_diff($group2,$levels);
+
+		return count(array_intersect($group1, $group2)) > 0;
+	}
+
 	/**
 	 * get a list of all users in a group
 	 * @param string $gid

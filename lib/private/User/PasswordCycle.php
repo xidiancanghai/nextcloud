@@ -33,17 +33,15 @@ class PasswordCycle {
 		}
 	}
 
-    public function Update(string $uid, string $t) {
+    public function Update(int $t) {
         $this->fixDI();
         $query = $this->dbConn->getQueryBuilder();
-        if ($this->Exists($uid)) {
-            $query->update($this->table)->set('life', $query->createNamedParameter($t))
-            ->where($query->expr()->eq('uid', $query->createNamedParameter($uid)));
+        if ($this->Exists()) {
+            $query->update($this->table)->set('life', $query->createNamedParameter($t));
 		    $query->execute();
         } else {
             $query->insert($this->table)
 				->values([
-                    'uid' => $query->createNamedParameter($uid),
 					'life' => $query->createNamedParameter($t)
 				]);
 
@@ -52,21 +50,23 @@ class PasswordCycle {
 		
     }
 
-    public function Exists(string $uid) {
+    public function Exists() {
         $this->fixDI();
         $qb = $this->dbConn->getQueryBuilder();
-        $qb->select('life')->from($this->table)->where($qb->expr()->eq('uid', $qb->createNamedParameter($uid)));
+        $qb->select('life')->from($this->table);
         $result = $qb->execute();
         $row = $result->fetch();
+        $result->closeCursor();
         return $row !== false;
     }
 
-    public function PassWordLife($uid) {
+    public function PassWordLife() {
         $this->fixDI();
         $qb = $this->dbConn->getQueryBuilder();
-        $qb->select('life')->from($this->table)->where($qb->expr()->eq('uid', $qb->createNamedParameter($uid)));
+        $qb->select('life')->from($this->table);
         $result = $qb->execute();
         $row = $result->fetch();
+        $result->closeCursor();
         return $row['life'];
     }
    

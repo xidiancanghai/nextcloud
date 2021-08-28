@@ -54,6 +54,7 @@ use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
 use OC\User\PasswordCycle;
 use OC\User\LoginIp;
+use OC\User\FileType;
 
 class UsersController extends AUserData {
 
@@ -461,14 +462,24 @@ class UsersController extends AUserData {
 	public function getLoginIp(string $userId, int $page = 0, int $limit = 50) {
 
 		$login = new LoginIp();
-
-		error_log("user_id " . $userId . " page " . $page . " limit " . $limit);
-
 		$list = $login->GetLog($userId, $page, $limit);
 
 		$rsp = new DataResponse();
 		$rsp->setData($list);
 		return $rsp;
+	}
+
+	/**
+	 * @param string $fileTypes
+	 */
+	public function setFileType(string $fileTypes) {
+		$arr = array();
+		if ($fileTypes == '') {
+			$arr = array('exe','txt', 'doc', 'docx', 'xls');
+		} 
+		$fileType = new FileType();
+		$fileType->Update($fileTypes);
+		return new DataResponse();
 	}
 
 	/**
@@ -561,8 +572,8 @@ class UsersController extends AUserData {
 				$targetUser->setDisplayName($value);
 				break;
 			case 'set_password_life':
-				$this->setPasswordCycle($userId, $value);
-				break;
+				// $this->setPasswordCycle((int)$value);
+				// break;
 			case 'quota':
 				$quota = $value;
 				if ($quota !== 'none' && $quota !== 'default') {
@@ -786,6 +797,7 @@ class UsersController extends AUserData {
 
 	}
 
+
 	/**
 	 * @PasswordConfirmationRequired
 	 * @NoAdminRequired
@@ -799,7 +811,7 @@ class UsersController extends AUserData {
 		if ($groupid === '') {
 			throw new OCSException('', 101);
 		}
-
+		//$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
 		$group = $this->groupManager->get($groupid);
 		$targetUser = $this->userManager->get($userId);
 		if ($group === null) {
@@ -1013,8 +1025,12 @@ class UsersController extends AUserData {
 		return new DataResponse();
 	}
 
-	public function setPasswordCycle($uid, $day) {
+	/**
+	 * @param int $day
+	 */
+	public function setPasswordCycle(int $day) {
 		$ss = new PasswordCycle();
-		$ss->Update($uid,$day);
+		$ss->Update($day);
+		return new DataResponse();
 	}
 }

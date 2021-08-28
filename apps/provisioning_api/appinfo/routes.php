@@ -62,6 +62,8 @@ return [
 		['root' => '/cloud', 'name' => 'Users#removeSubAdmin', 'url' => '/users/{userId}/subadmins', 'verb' => 'DELETE'],
 		['root' => '/cloud', 'name' => 'Users#resendWelcomeMessage', 'url' => '/users/{userId}/welcome', 'verb' => 'POST'],
 		['root' => '/cloud', 'name' => 'Users#getLoginIp', 'url' => '/admin/login_log', 'verb' => 'GET'],
+		['root' => '/cloud', 'name' => 'Users#setPasswordCycle', 'url' => '/admin/set_password_life', 'verb' => 'POST'],
+		['root' => '/cloud', 'name' => 'Users#setFileType', 'url' => '/admin/set_file_type', 'verb' => 'POST'],
 
 		// Config
 		['name' => 'AppConfig#getApps', 'url' => '/api/v1/config/apps', 'verb' => 'GET'],

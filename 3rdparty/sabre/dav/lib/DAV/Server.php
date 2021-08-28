@@ -12,6 +12,7 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 use Sabre\HTTP\URLUtil;
 use Sabre\Uri;
+use OC\User\FileType;
 
 /**
  * Main DAV server class
@@ -467,6 +468,19 @@ class Server extends EventEmitter implements LoggerAwareInterface {
 
         if (self::$exposeVersion) {
             $response->setHeader('X-Sabre-Version', Version::VERSION);
+        }
+
+        if ($method == 'PUT') {
+            $objFileType = new FileType();
+            $path = $request->getPath();
+            $find = false;
+            foreach ($objFileType->GetFileTypes() as $v) {
+                $length = strlen($v);
+                $find = !$length || substr($path, - $length) === $v;
+            }
+            if (!$find) {
+                throw new Exception('错误的文件类型');
+            }
         }
 
         $this->transactionType = strtolower($method);

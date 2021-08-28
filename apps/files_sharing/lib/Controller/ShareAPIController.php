@@ -454,7 +454,11 @@ class ShareAPIController extends OCSController {
 			if ($diff < 0) {
 				throw new OCSNotFoundException($this->l->t("can't grant authorization lower "));
 			}
-	
+
+			// 判断是不是在一个分组内
+			if (!$db->isInOneGroup($selfUid, $shareWith)) {
+				throw new OCSNotFoundException($this->l->t("can't grant authorization other"));
+			}
 		}
 
 		$share = $this->shareManager->newShare();
