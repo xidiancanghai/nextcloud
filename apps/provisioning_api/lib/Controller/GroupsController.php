@@ -41,6 +41,7 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\IUser;
+use OC\User;
 
 class GroupsController extends AUserData {
 
@@ -244,6 +245,13 @@ class GroupsController extends AUserData {
 		if($this->groupManager->groupExists($groupid)){
 			throw new OCSException('group exists', 102);
 		}
+		
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		$ip = $this->request->getRemoteAddress();
+
+		$log = new \OC\User\SysLogInfo();
+		$log->Insert($uid, "创建了分组".$groupid, $ip);
+
 		$this->groupManager->createGroup($groupid);
 		return new DataResponse();
 	}
@@ -263,6 +271,12 @@ class GroupsController extends AUserData {
 			// Cannot delete admin group
 			throw new OCSException('', 102);
 		}
+
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		$ip = $this->request->getRemoteAddress();
+
+		$log = new \OC\User\SysLogInfo();
+		$log->Insert($uid, "删除了分组".$groupId, $ip);
 
 		return new DataResponse();
 	}

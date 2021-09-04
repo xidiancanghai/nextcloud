@@ -63,7 +63,6 @@ class LoginIp {
 
     public function GetLog(string $uid, int $page, int $limit) {
         $offset = $page * $limit;
-        error_log("GetLog = " . $uid . " " . $page . " " . $offset);
         $this->fixDI();
         $qb = $this->dbConn->getQueryBuilder();
         

@@ -290,6 +290,11 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 				'length' => 512,
 				'default' => '',
 			]);
+			$table->addColumn('level', 'string', [
+				'notnull' => true,
+				'length' => 16,
+				'default' => '公开',
+			]);
 			$table->addColumn('update_time', 'integer', [
 				'notnull' => true,
 				'length' => 12,
@@ -331,6 +336,69 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 				'default' => '',
 			]);
 			$table->addColumn('update_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->setPrimaryKey(['id']);
+			$table->addIndex(['uid']);
+		}
+
+		if (!$schema->hasTable('login_conf')) {
+			$table = $schema->createTable('login_ip');
+			$table->addColumn('id', 'integer', [
+				'autoincrement' => true,
+				'length' => 11,
+			]);
+			$table->addColumn('retry_times', 'integer', [
+				'notnull' => true,
+				'length' => 4,
+				'default' => '4',
+			]);
+			$table->addColumn('interval', 'integer', [
+				'notnull' => true,
+				'length' => 4,
+				'default' => '30',
+			]);
+			$table->addColumn('update_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->addColumn('create_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->setPrimaryKey(['id']);
+			$table->addIndex(['uid']);
+		}
+
+		if (!$schema->hasTable('syslog_info')) {
+			$table = $schema->createTable('syslog_info');
+			$table->addColumn('id', 'integer', [
+				'autoincrement' => true,
+				'length' => 11,
+			]);
+			$table->addColumn('uid', 'string', [
+				'notnull' => true,
+				'length' => 64,
+				'default' => '',
+			]);
+			$table->addColumn('log', 'string', [
+				'notnull' => true,
+				'length' => 256,
+				'default' => '',
+			]);
+			$table->addColumn('ip', 'string', [
+				'notnull' => true,
+				'length' => 32,
+				'default' => '',
+			]);
+			$table->addColumn('create_time', 'integer', [
 				'notnull' => true,
 				'length' => 12,
 				'default' => '0',

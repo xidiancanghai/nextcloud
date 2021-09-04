@@ -371,12 +371,19 @@ class ShareAPIController extends OCSController {
 	 * @throws \OCP\Files\InvalidPathException
 	 * @suppress PhanUndeclaredClassMethod
 	 */
-	public function setLevel(
-		string $path ,
-		string $level = '公开'
-	) {
+	public function setLevel(string $path,string $level = '公开') {
 		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
-		
+
+		// 当前用户等级
+		$db = new Database();
+		$selfLevel = $db->userSecLevel($uid);
+		$diff = $this->compareLevel($selfLevel, $level);
+		// 不能把文件给低权限用户
+		if ($diff > 0) {
+			throw new OCSNotFoundException($this->l->t("can't set high level"));
+		}
+
+
 		$data = new FileLevel();
 		$data->Update($uid, $path, $level);
 		
@@ -441,6 +448,7 @@ class ShareAPIController extends OCSController {
 		string $label = ''
 	): DataResponse {
 
+		$originPath = $path;
 
 		if ($shareWith != '') {
 			$selfUid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
@@ -653,6 +661,18 @@ class ShareAPIController extends OCSController {
 			throw new OCSException($e->getHint(), $code);
 		} catch (\Exception $e) {
 			throw new OCSForbiddenException($e->getMessage(), $e);
+		}
+
+		if ($shareWith == '') {
+			$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+			$ip = $this->request->getRemoteAddress();
+			$log = new \OC\User\SysLogInfo();
+			$log->Insert($uid, "分享了文件" . $originPath , $ip);
+		} else {
+			$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+			$ip = $this->request->getRemoteAddress();
+			$log = new \OC\User\SysLogInfo();
+			$log->Insert($uid, "分享了文件" . $originPath . "给" . $shareWith , $ip);
 		}
 
 		$output = $this->formatShare($share);

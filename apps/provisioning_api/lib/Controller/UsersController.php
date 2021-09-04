@@ -307,6 +307,13 @@ class UsersController extends AUserData {
 		}
 
 		try {
+
+			$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+			$ip = $this->request->getRemoteAddress();
+
+			$log = new \OC\User\SysLogInfo();
+			$log->Insert($uid, "添加了用户".$userid, $ip);
+
 			$newUser = $this->userManager->createUser($userid, $password);
 			$this->logger->info('Successful addUser call with userid: ' . $userid, ['app' => 'ocs_api']);
 
@@ -464,6 +471,14 @@ class UsersController extends AUserData {
 		$login = new LoginIp();
 		$list = $login->GetLog($userId, $page, $limit);
 
+		$rsp = new DataResponse();
+		$rsp->setData($list);
+		return $rsp;
+	}
+
+	public function listLog(string $userId = "", int $page = 0 , int $limit = 50) {
+		$log = new \OC\User\SysLogInfo();
+		$list = $log->GetLog($userId, $page, $limit);
 		$rsp = new DataResponse();
 		$rsp->setData($list);
 		return $rsp;
@@ -1032,5 +1047,9 @@ class UsersController extends AUserData {
 		$ss = new PasswordCycle();
 		$ss->Update($day);
 		return new DataResponse();
+	}
+
+	public function setLoginConf(int $retryTimes, int $interval) {
+		
 	}
 }

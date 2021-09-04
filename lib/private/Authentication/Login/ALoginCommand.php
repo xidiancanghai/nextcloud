@@ -35,9 +35,12 @@ abstract class ALoginCommand {
 	}
 
 	protected function processNextOrFinishSuccessfully(LoginData $loginData): LoginResult {
+		error_log("json_ " . json_encode($loginData) .  " " . get_class($this->next));
 		if ($this->next !== null) {
+			error_log("json_0 " . json_encode($loginData) .  " " . get_class($this->next));
 			return $this->next->process($loginData);
 		} else {
+			error_log("json_1 " . json_encode($loginData) .  " " . get_class($this->next));
 			return LoginResult::success($loginData);
 		}
 	}

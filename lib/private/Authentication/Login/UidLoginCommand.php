@@ -50,7 +50,6 @@ class UidLoginCommand extends ALoginCommand {
 		);
 
 		$loginData->setUser($user);
-
 		return $this->processNextOrFinishSuccessfully($loginData);
 	}
 

@@ -49,8 +49,7 @@ class FileLevel {
                     'level' => $query->createNamedParameter($level),
                     'update_time' => $query->createNamedParameter(time())
 				]);
-
-			$result = $query->execute();
+			$query->execute();
         }
 		
     }

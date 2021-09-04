@@ -67,6 +67,10 @@ class PersonalSettingsController extends Controller {
 
 	}
 
+	public function sysLog() {
+		error_log("here");
+	}
+
 	/**
 	 * @param string $section
 	 * @return array

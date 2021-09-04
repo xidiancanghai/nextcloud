@@ -155,6 +155,13 @@ class Group implements IGroup {
 		if ($this->inGroup($user)) {
 			return;
 		}
+	
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		if ($uid != null && $uid != "") {
+			$ip = \OC::$server->getRequest()->getRemoteAddress();
+			$log = new \OC\User\SysLogInfo();
+   			$log->Insert($uid, "添加用户" . $user->getUID() . "到" . $this->gid . "组", $ip);
+		}
 
 		$this->dispatcher->dispatch(IGroup::class . '::preAddUser', new GenericEvent($this, [
 			'user' => $user,
@@ -195,6 +202,13 @@ class Group implements IGroup {
 		if ($this->emitter) {
 			$this->emitter->emit('\OC\Group', 'preRemoveUser', array($this, $user));
 		}
+
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		$ip = \OC::$server->getRequest()->getRemoteAddress();
+
+		$log = new \OC\User\SysLogInfo();
+		$log->Insert($uid, "把用户" . $user->getUID() . "从" .$this->gid  . "组移除" , $ip);
+
 		foreach ($this->backends as $backend) {
 			if ($backend->implementsActions(\OC\Group\Backend::REMOVE_FROM_GOUP) and $backend->inGroup($user->getUID(), $this->gid)) {
 				$backend->removeFromGroup($user->getUID(), $this->gid);

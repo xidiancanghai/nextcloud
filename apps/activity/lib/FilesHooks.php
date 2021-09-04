@@ -481,7 +481,6 @@ class FilesHooks {
 		if (empty($users)) {
 			return;
 		}
-
 		$filteredStreamUsers = $this->userSettings->filterUsersBySetting($users, 'stream', Files::TYPE_SHARE_DELETED);
 		$filteredEmailUsers = $this->userSettings->filterUsersBySetting($users, 'email', Files::TYPE_SHARE_DELETED);
 

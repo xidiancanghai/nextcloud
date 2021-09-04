@@ -470,17 +470,37 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             $response->setHeader('X-Sabre-Version', Version::VERSION);
         }
 
+        //error_log("request = " . json_encode($request) . " " . $method . " " . $request->getPath());
+
         if ($method == 'PUT') {
             $objFileType = new FileType();
             $path = $request->getPath();
             $find = false;
-            foreach ($objFileType->GetFileTypes() as $v) {
+
+            $fileTypes = $objFileType->GetFileTypes();
+            foreach ($fileTypes  as $v) {
                 $length = strlen($v);
                 $find = !$length || substr($path, - $length) === $v;
             }
-            if (!$find) {
+            if (!$find && count($fileTypes) != 0) {
                 throw new Exception('错误的文件类型');
             }
+
+            $uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+            $ip = \OC::$server->getRequest()->getRemoteAddress();
+
+            $log = new \OC\User\SysLogInfo();
+            $log->Insert($uid, "上传了文件" . $path, $ip);
+        }
+
+        if ($method == 'MKCOL') {
+
+            $path = $request->getPath();
+            $uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+            $ip = \OC::$server->getRequest()->getRemoteAddress();
+
+            $log = new \OC\User\SysLogInfo();
+            $log->Insert($uid, "创建了文件夹" . $path, $ip);
         }
 
         $this->transactionType = strtolower($method);

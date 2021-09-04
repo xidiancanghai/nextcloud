@@ -102,6 +102,7 @@ OC.L10N.register(
     "Could not delete share" : "不能删除共享",
     "Please specify a file or folder path" : "请指定一个文件或文件夹路径",
     "can't grant authorization lower " : "不能授权给低权限用户",
+    "can't set high level " : "当前等级不够",
     "can't grant authorization other" : "不能授权给不同组用户",
     "Wrong path, file/folder doesn't exist" : "路径错误，文件或文件夹不存在",
     "Could not create share" : "无法创建共享",

@@ -120,6 +120,13 @@ class LoginController extends Controller {
 		if (!is_null($loginToken)) {
 			$this->config->deleteUserValue($this->userSession->getUser()->getUID(), 'login_token', $loginToken);
 		}
+
+		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+   		$ip = $this->request->getRemoteAddress();
+
+  	 	$log = new \OC\User\SysLogInfo();
+   		$log->Insert($uid, "退出登陆", $ip);
+
 		$this->userSession->logout();
 
 		$response = new RedirectResponse($this->urlGenerator->linkToRouteAbsolute(
@@ -290,6 +297,9 @@ class LoginController extends Controller {
 
 		$login = new LoginIp();
 		$login->Update($user,$this->request->getRemoteAddress());
+
+  		$log = new \OC\User\SysLogInfo();
+  	 	$log->Insert($user, "登陆", $this->request->getRemoteAddress());
 
 		$data = new LoginData(
 			$this->request,

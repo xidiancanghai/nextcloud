@@ -396,7 +396,7 @@ class Setup {
 			$group =\OC::$server->getGroupManager()->createGroup('admin');
 			$group->addUser($sysAdminUser);
 			$group->addUser($secAdminUser);
-			//$group->addUser($audAdminUser);
+			$group->addUser($audAdminUser);
 			\OC::$server->GetGroupManager()->createGroup("机密");
 			\OC::$server->GetGroupManager()->createGroup("秘密");
 			\OC::$server->GetGroupManager()->createGroup("内部");

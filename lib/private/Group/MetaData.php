@@ -194,6 +194,11 @@ class MetaData {
 		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
 		$isSecAdmin = $uid == "Secadmin@2021";
 		if($this->isAdmin || $isSecAdmin) {
+
+			if ($uid == "Audadmin@2021") {
+				return array();
+			}
+			
 			// 过滤
 			$secGroups = array();
 			$nomormalGroups = array();

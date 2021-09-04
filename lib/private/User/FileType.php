@@ -66,7 +66,7 @@ class FileType {
         $row = $result->fetch();
         $result->closeCursor();
         if ($row == false) {
-            return array('exe','txt', 'doc', 'docx', 'xls','ppt');
+            return array();
         }
         $fileTypes = (string)$row['file_types'];
         return explode(',', $fileTypes);

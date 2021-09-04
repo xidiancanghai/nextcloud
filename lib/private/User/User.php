@@ -266,6 +266,13 @@ class User implements IUser {
 			$this->emitter->emit('\OC\User', 'preSetPassword', array($this, $password, $recoveryPassword));
 		}
 		if ($this->backend->implementsActions(Backend::SET_PASSWORD)) {
+
+			$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+   			$ip = \OC::$server->getRequest()->getRemoteAddress();
+
+   			$log = new \OC\User\SysLogInfo();
+   			$log->Insert($uid, "修改了".$this->uid . "密码", $ip);
+
 			$result = $this->backend->setPassword($this->uid, $password);
 			$this->dispatcher->dispatch(IUser::class . '::postSetPassword', new GenericEvent($this, [
 				'password' => $password,
