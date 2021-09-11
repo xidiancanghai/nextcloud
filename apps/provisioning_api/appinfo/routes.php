@@ -63,8 +63,10 @@ return [
 		['root' => '/cloud', 'name' => 'Users#resendWelcomeMessage', 'url' => '/users/{userId}/welcome', 'verb' => 'POST'],
 		['root' => '/cloud', 'name' => 'Users#getLoginIp', 'url' => '/admin/login_log', 'verb' => 'GET'],
 		['root' => '/cloud', 'name' => 'Users#listLog', 'url' => '/admin/list_log', 'verb' => 'GET'],
+		['root' => '/cloud', 'name' => 'Users#searchLog', 'url' => '/admin/search_log', 'verb' => 'GET'],
 		['root' => '/cloud', 'name' => 'Users#setPasswordCycle', 'url' => '/admin/set_password_life', 'verb' => 'POST'],
 		['root' => '/cloud', 'name' => 'Users#setFileType', 'url' => '/admin/set_file_type', 'verb' => 'POST'],
+		['root' => '/cloud', 'name' => 'Users#setLoginConf', 'url' => '/admin/set_login_conf', 'verb' => 'POST'],
 
 		// Config
 		['name' => 'AppConfig#getApps', 'url' => '/api/v1/config/apps', 'verb' => 'GET'],

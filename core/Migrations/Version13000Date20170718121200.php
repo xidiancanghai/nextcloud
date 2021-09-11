@@ -346,7 +346,7 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 		}
 
 		if (!$schema->hasTable('login_conf')) {
-			$table = $schema->createTable('login_ip');
+			$table = $schema->createTable('login_conf');
 			$table->addColumn('id', 'integer', [
 				'autoincrement' => true,
 				'length' => 11,
@@ -374,7 +374,32 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 				'unsigned' => true,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addIndex(['uid']);
+		}
+
+		if (!$schema->hasTable('login_error_info')) {
+			$table = $schema->createTable('login_error_info');
+			$table->addColumn('uid', 'string', [
+				'notnull' => true,
+				'length' => 64,
+			]);
+			$table->addColumn('times', 'integer', [
+				'notnull' => true,
+				'length' => 4,
+				'default' => '30',
+			]);
+			$table->addColumn('update_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->addColumn('create_time', 'integer', [
+				'notnull' => true,
+				'length' => 12,
+				'default' => '0',
+				'unsigned' => true,
+			]);
+			$table->setPrimaryKey(['uid']);
 		}
 
 		if (!$schema->hasTable('syslog_info')) {
@@ -386,6 +411,11 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			$table->addColumn('uid', 'string', [
 				'notnull' => true,
 				'length' => 64,
+				'default' => '',
+			]);
+			$table->addColumn('log_type', 'string', [
+				'notnull' => true,
+				'length' => 16,
 				'default' => '',
 			]);
 			$table->addColumn('log', 'string', [
@@ -406,6 +436,8 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['uid']);
+			$table->addIndex(['create_time']);
+			$table->addIndex(['log_type']);
 		}
 
 		if (!$schema->hasTable('preferences')) {

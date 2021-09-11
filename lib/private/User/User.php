@@ -271,7 +271,7 @@ class User implements IUser {
    			$ip = \OC::$server->getRequest()->getRemoteAddress();
 
    			$log = new \OC\User\SysLogInfo();
-   			$log->Insert($uid, "修改了".$this->uid . "密码", $ip);
+   			$log->Insert($uid, "用户行为","修改了".$this->uid . "密码", $ip);
 
 			$result = $this->backend->setPassword($this->uid, $password);
 			$this->dispatcher->dispatch(IUser::class . '::postSetPassword', new GenericEvent($this, [

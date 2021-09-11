@@ -125,7 +125,7 @@ class LoginController extends Controller {
    		$ip = $this->request->getRemoteAddress();
 
   	 	$log = new \OC\User\SysLogInfo();
-   		$log->Insert($uid, "退出登陆", $ip);
+   		$log->Insert($uid, "登出", "退出登陆", $ip);
 
 		$this->userSession->logout();
 
@@ -298,9 +298,6 @@ class LoginController extends Controller {
 		$login = new LoginIp();
 		$login->Update($user,$this->request->getRemoteAddress());
 
-  		$log = new \OC\User\SysLogInfo();
-  	 	$log->Insert($user, "登陆", $this->request->getRemoteAddress());
-
 		$data = new LoginData(
 			$this->request,
 			trim($user),
@@ -309,8 +306,24 @@ class LoginController extends Controller {
 			$timezone,
 			$timezone_offset
 		);
+
+		
+		$loginError = new \OC\User\LoginErrorInfo();
+		
+		if (!$loginError->CanLogin($user)) {
+			return $this->createLoginFailedResponse(
+				$data->getUsername(),
+				$user,
+				$redirect_url,
+				"登陆失败次数过多，稍后重试",
+			);
+		}
+
 		$result = $this->loginChain->process($data);
 		if (!$result->isSuccess()) {
+
+			$loginError->AddError($user);
+			
 			return $this->createLoginFailedResponse(
 				$data->getUsername(),
 				$user,
@@ -319,6 +332,11 @@ class LoginController extends Controller {
 			);
 		}
 
+		$loginError->Reset($user);
+
+		$log = new \OC\User\SysLogInfo();
+  	 	$log->Insert($user, "登陆","登陆", $this->request->getRemoteAddress());
+		
 		if ($result->getRedirectUrl() !== null) {
 			return new RedirectResponse($result->getRedirectUrl());
 		}

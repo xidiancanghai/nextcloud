@@ -55,12 +55,15 @@ style('password_policy', 'settings-admin');
 			   value="1" <?php if ($_['enforceSpecialCharacters']) print_unescaped('checked="checked"'); ?> />
 		<label for="password-policy-enforce-special-characters"><?php p($l->t('Enforce special characters'));?></label><br/>
 	</p>
-	<p id="enforceHaveIBeenPwned">
-		<input type="checkbox" name="password-policy-enforce-have-i-been-pwned" id="password-policy-enforce-have-i-been-pwned" class="checkbox"
-			   value="1" <?php if ($_['enforceHaveIBeenPwned']) print_unescaped('checked="checked"'); ?> />
-		<label for="password-policy-enforce-have-i-been-pwned"><?php p($l->t('Check password against the list of breached passwords from haveibeenpwned.com'));?></label><br/>
+
+	<p id="enforceSpecialDaysCharacters">
+		密码周期设置：
+		<input type="checkbox" name="password-policy-enforce-7days-characters" id="password-policy-enforce-7days-characters" class="checkbox"
+			   value="1" <?php if ($_['enforceSpecialCharacters']) print_unescaped('checked="checked"'); ?> />
+		<label for="password-policy-enforce-7days-characters">7天</label>&nbsp;
+		<input type="checkbox" name="password-policy-enforce-30days-characters" id="password-policy-enforce-30days-characters" class="checkbox"
+			   value="1" <?php if ($_['enforceSpecialCharacters']) print_unescaped('checked="checked"'); ?> />
+		<label for="password-policy-enforce-30days-characters">30天</label><br/>
 	</p>
-	<p class="password-policy-settings-hint">
-		<?php p($l->t('This check creates a hash of the password and sends the first 5 characters of this hash to the haveibeenpwned.com API to retrieve a list of all hashes that start with those. Then it checks on the Nextcloud instance if the password hash is in the result set.'));?>
-	</p>
+
 </div>

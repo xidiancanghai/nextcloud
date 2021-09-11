@@ -55,33 +55,45 @@ script('files', 'jquery.fileupload');
 			}
 		}
 		?>
-
 		<?php
-		if(!empty($_['forms']['admin'])) {
+			$uid = \OC::$server->getUserSession()->getUser()->getUID();
+			if($uid == 'Audadmin@2021'){
+		?>
+			<li>
+				<a href="/index.php/settings/admin/logging"> <img alt="" src="/apps/logreader/img/app-dark.svg">
+						<span>日志</span>
+				</a>
+			</li>
+		<?php		
+			}
+		?>
+		<?php
+		$uid = \OC::$server->getUserSession()->getUser()->getUID();
+		if(!empty($_['forms']['admin']) && $uid != "Audadmin@2021" && $uid != "Secadmin@2021") {
 			?>
 			<li class="app-navigation-caption"><?php p($l->t('Administration')); ?></li>
 			<?php
-		}
-		foreach($_['forms']['admin'] as $form) {
-			if (isset($form['anchor'])) {
+			foreach($_['forms']['admin'] as $form) {
+				if (isset($form['anchor'])) {
 
-				$anchor = \OC::$server->getURLGenerator()->linkToRoute('settings.AdminSettings.index', ['section' => $form['anchor']]);
-				$class = 'nav-icon-' . $form['anchor'];
-				$sectionName = $form['section-name'];
-				$active = $form['active'] ? ' class="active"' : '';
-		?>
-				<li <?php print_unescaped($form['active'] ? ' class="active"' : ''); ?>>
-					<a href="<?php p($anchor); ?>">
-						<?php if (!empty($form['icon'])) { ?>
-							<img alt="" src="<?php print_unescaped($form['icon']); ?>">
-							<span><?php p($form['section-name']); ?></span>
-						<?php } else { ?>
-							<span class="no-icon"><?php p($form['section-name']); ?></span>
-						<?php } ?>
-					</a>
-				</li>
+					$anchor = \OC::$server->getURLGenerator()->linkToRoute('settings.AdminSettings.index', ['section' => $form['anchor']]);
+					$class = 'nav-icon-' . $form['anchor'];
+					$sectionName = $form['section-name'];
+					$active = $form['active'] ? ' class="active"' : '';
+			?>
+					<li <?php print_unescaped($form['active'] ? ' class="active"' : ''); ?>>
+						<a href="<?php p($anchor); ?>">
+							<?php if (!empty($form['icon'])) { ?>
+								<img alt="" src="<?php print_unescaped($form['icon']); ?>">
+								<span><?php p($form['section-name']); ?></span>
+							<?php } else { ?>
+								<span class="no-icon"><?php p($form['section-name']); ?></span>
+							<?php } ?>
+						</a>
+					</li>
 		<?php
 			}
+		}
 		}
 		?>
 	</ul>

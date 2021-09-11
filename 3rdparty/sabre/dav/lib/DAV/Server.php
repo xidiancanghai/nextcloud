@@ -490,7 +490,7 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             $ip = \OC::$server->getRequest()->getRemoteAddress();
 
             $log = new \OC\User\SysLogInfo();
-            $log->Insert($uid, "上传了文件" . $path, $ip);
+            $log->Insert($uid, "用户行为","上传了文件" . $path, $ip);
         }
 
         if ($method == 'MKCOL') {
@@ -500,7 +500,7 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             $ip = \OC::$server->getRequest()->getRemoteAddress();
 
             $log = new \OC\User\SysLogInfo();
-            $log->Insert($uid, "创建了文件夹" . $path, $ip);
+            $log->Insert($uid, "用户行为", "创建了文件夹" . $path, $ip);
         }
 
         $this->transactionType = strtolower($method);

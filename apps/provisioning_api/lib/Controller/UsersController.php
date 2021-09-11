@@ -55,6 +55,7 @@ use OCP\Security\ISecureRandom;
 use OC\User\PasswordCycle;
 use OC\User\LoginIp;
 use OC\User\FileType;
+use OC\User\LoginConf;	
 
 class UsersController extends AUserData {
 
@@ -312,7 +313,7 @@ class UsersController extends AUserData {
 			$ip = $this->request->getRemoteAddress();
 
 			$log = new \OC\User\SysLogInfo();
-			$log->Insert($uid, "添加了用户".$userid, $ip);
+			$log->Insert($uid, "用户行为","添加了用户".$userid, $ip);
 
 			$newUser = $this->userManager->createUser($userid, $password);
 			$this->logger->info('Successful addUser call with userid: ' . $userid, ['app' => 'ocs_api']);
@@ -476,9 +477,32 @@ class UsersController extends AUserData {
 		return $rsp;
 	}
 
+	/**
+	 * @param string $userId
+	 * @param int $page
+	 * @param int $limit 
+	 */
 	public function listLog(string $userId = "", int $page = 0 , int $limit = 50) {
 		$log = new \OC\User\SysLogInfo();
-		$list = $log->GetLog($userId, $page, $limit);
+		$offset = $page * $limit;
+		$list = $log->GetLog($userId, $offset, $limit);
+		$rsp = new DataResponse();
+		$rsp->setData($list);
+		return $rsp;
+	}
+
+	/**
+	 * @param string $filter
+	 * @param  string $userId
+	 * @param  int $start
+	 * @param int $end
+	 * @param  int $page
+	 * @param int $limit 
+	 */
+	public function searchLog(string $filter = '', string $userId = '', int $start = 0, int $end = 0,int $page = 0 , int $limit = 50) {
+		$log = new \OC\User\SysLogInfo();
+		$offset = $page * $limit;
+		$list = $log->Search($userId, $filter, $start, $end, $offset, $limit);
 		$rsp = new DataResponse();
 		$rsp->setData($list);
 		return $rsp;
@@ -1049,7 +1073,13 @@ class UsersController extends AUserData {
 		return new DataResponse();
 	}
 
-	public function setLoginConf(int $retryTimes, int $interval) {
-		
+	/**
+	 * @param int $retryTimes
+	 * @param int $interval
+	 */
+	public function setLoginConf(int $retryTimes = 0, int $interval = 0) {
+		$loginConf = new LoginConf();
+		$loginConf->Update($retryTimes,$interval);
+		return new DataResponse();
 	}
 }

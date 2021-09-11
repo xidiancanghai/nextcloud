@@ -33,41 +33,54 @@ class LoginConf {
 		}
 	}
 
-    public function Update(int $t) {
+    public function Update(int $retryTimes, int $interval) {
         $this->fixDI();
         $query = $this->dbConn->getQueryBuilder();
-        if ($this->Exists()) {
-            $query->update($this->table)->set('life', $query->createNamedParameter($t));
+        $id = $this->GetId();
+        if ($id != 0) {
+            $query->update($this->table);
+            if ($retryTimes != 0 ) {
+                $query->set('retry_times', $query->createNamedParameter($retryTimes));
+            }
+            if ($interval != 0) {
+                $query->set('interval', $query->createNamedParameter($interval));
+            }
+            $query->set('update_time', $query->createNamedParameter(time()));
+            $query->where($query->expr()->eq('id', $query->createNamedParameter($id)));
 		    $query->execute();
         } else {
+            $t = time();
             $query->insert($this->table)
 				->values([
-					'life' => $query->createNamedParameter($t)
+					'retry_times' => $query->createNamedParameter($retryTimes),
+                    'interval' => $query->createNamedParameter($interval),
+                    'update_time' => $query->createNamedParameter($t),
+                    'create_time' => $query->createNamedParameter($t),
 				]);
-
-			$result = $query->execute();
+			$query->execute();
         }
 		
     }
 
-    public function Exists() {
+    public function GetId() {
         $this->fixDI();
         $qb = $this->dbConn->getQueryBuilder();
-        $qb->select('life')->from($this->table);
+        $qb->select('id')->from($this->table);
         $result = $qb->execute();
         $row = $result->fetch();
         $result->closeCursor();
-        return $row !== false;
+        return (int)$row['id'];
     }
 
-    public function PassWordLife() {
+    public function GetConf() {
         $this->fixDI();
         $qb = $this->dbConn->getQueryBuilder();
-        $qb->select('life')->from($this->table);
+        $qb->select('retry_times','interval')->from($this->table);
         $result = $qb->execute();
         $row = $result->fetch();
         $result->closeCursor();
-        return $row['life'];
+        return array('retry_times' => (int)$row['retry_times'], 'interval' => (int)$row['interval']);
     }
-   
+
+
 }

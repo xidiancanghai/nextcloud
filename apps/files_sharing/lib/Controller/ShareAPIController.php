@@ -667,12 +667,12 @@ class ShareAPIController extends OCSController {
 			$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
 			$ip = $this->request->getRemoteAddress();
 			$log = new \OC\User\SysLogInfo();
-			$log->Insert($uid, "分享了文件" . $originPath , $ip);
+			$log->Insert($uid, "用户行为","分享了文件" . $originPath , $ip);
 		} else {
 			$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
 			$ip = $this->request->getRemoteAddress();
 			$log = new \OC\User\SysLogInfo();
-			$log->Insert($uid, "分享了文件" . $originPath . "给" . $shareWith , $ip);
+			$log->Insert($uid, "用户行为","分享了文件" . $originPath . "给" . $shareWith , $ip);
 		}
 
 		$output = $this->formatShare($share);

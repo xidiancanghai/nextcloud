@@ -160,7 +160,7 @@ class Group implements IGroup {
 		if ($uid != null && $uid != "") {
 			$ip = \OC::$server->getRequest()->getRemoteAddress();
 			$log = new \OC\User\SysLogInfo();
-   			$log->Insert($uid, "添加用户" . $user->getUID() . "到" . $this->gid . "组", $ip);
+   			$log->Insert($uid, "用户行为","添加用户" . $user->getUID() . "到" . $this->gid . "组", $ip);
 		}
 
 		$this->dispatcher->dispatch(IGroup::class . '::preAddUser', new GenericEvent($this, [
@@ -207,7 +207,7 @@ class Group implements IGroup {
 		$ip = \OC::$server->getRequest()->getRemoteAddress();
 
 		$log = new \OC\User\SysLogInfo();
-		$log->Insert($uid, "把用户" . $user->getUID() . "从" .$this->gid  . "组移除" , $ip);
+		$log->Insert($uid, "用户行为","把用户" . $user->getUID() . "从" .$this->gid  . "组移除" , $ip);
 
 		foreach ($this->backends as $backend) {
 			if ($backend->implementsActions(\OC\Group\Backend::REMOVE_FROM_GOUP) and $backend->inGroup($user->getUID(), $this->gid)) {

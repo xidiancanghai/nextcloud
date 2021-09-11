@@ -250,7 +250,7 @@ class GroupsController extends AUserData {
 		$ip = $this->request->getRemoteAddress();
 
 		$log = new \OC\User\SysLogInfo();
-		$log->Insert($uid, "创建了分组".$groupid, $ip);
+		$log->Insert($uid, "用户行为","创建了分组".$groupid, $ip);
 
 		$this->groupManager->createGroup($groupid);
 		return new DataResponse();
@@ -276,7 +276,7 @@ class GroupsController extends AUserData {
 		$ip = $this->request->getRemoteAddress();
 
 		$log = new \OC\User\SysLogInfo();
-		$log->Insert($uid, "删除了分组".$groupId, $ip);
+		$log->Insert($uid, "用户行为","删除了分组".$groupId, $ip);
 
 		return new DataResponse();
 	}
